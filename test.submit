@@ -1,0 +1,44 @@
+#RUNTIME = r2015b.tar.gz
+RUNTIME = r2018b.tar.gz
+RUNDIR = v95
+#RUNDIR = v90
+OUTPUTFILE = access.$(Cluster).$(Process).txt
+
+universe = vanilla
+
+log = logs/$(Cluster)_$(Process).log
+output = logs/$(Cluster)_$(Process).out
+
+#executable = wrapper.sh
+#executable = stashcp_wrapper.sh
+executable = modules_wrapper.sh
+arguments = $(RUNTIME) $(RUNDIR) $(OUTPUTFILE)
+
+should_transfer_files = YES
+when_to_transfer_output = ON_EXIT
+
+# CHTC Squid Tar
+#transfer_input_files = http://proxy.chtc.wisc.edu/SQUID/$(RUNTIME),inputs/
+
+# Stash Squid Tar
+#transfer_input_files = http://stash.osgconnect.net/public/ckoch5/matlab-testing/$(RUNTIME),inputs/
+
+# StashCache and OASIS
+transfer_input_files = inputs/
+
+
+error = results/time.$(Cluster).$(Process).txt
+transfer_output_files = $(OUTPUTFILE)
+transfer_output_remaps = "$(OUTPUTFILE)=results/$(OUTPUTFILE)"
+
+# For StashCache
+#+WantsStashCache = true
+requirements = OSGVO_OS_STRING == "RHEL 7" && Arch == "X86_64" && HAS_MODULES == True
+
+request_cpus = 1
+request_memory = 1GB
+request_disk = 6GB
++ProjectName="osg.OSG-Staff"
++WantIOProxy = true
+
+queue 100
